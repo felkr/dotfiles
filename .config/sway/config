@@ -20,6 +20,7 @@ set $browser "firefox"
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 set $menu exec wofi --show drun
+exec mako
 # set $menu exec ~/.config/waybar/scripts/wofi.sh
 # set $menu nwggrid -l us
 set $wob /tmp/swaytmp/wobpipe
@@ -269,6 +270,7 @@ mode "Logout" {
 
 bindsym $mod+r mode "Resize"
 bindsym Control+$mod+e exec nwgbar -b 2e3440ff
+bindsym $mod+p exec grim -g "$(slurp -d)" - | swappy -f -
 #
 # Status Bar:
 #
