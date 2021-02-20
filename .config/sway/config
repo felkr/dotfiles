@@ -53,7 +53,9 @@ font pango:Inter Bold 9
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg ~/Wallpapers/wallhaven-j35k2y.png fill
+#output * bg ~/Wallpapers/wallhaven-j35k2y.png fill
+
+exec ~/.azotebg
 output DP-1 mode 1920x1080@165Hz
 output DP-2 scale 1.75
 output DP-2 transform 90
