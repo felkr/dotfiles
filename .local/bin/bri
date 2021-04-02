@@ -11,5 +11,5 @@ brightness = int(sys.argv[1])
 def set_brightness(brightness, display):
 	os.system("ddcutil setvcp 10 {} -d {}".format(brightness, display))
 
-set_brightness(brightness % 101, 1)
-set_brightness((brightness * 2) % 101, 2)
+set_brightness(min(brightness, 100), 1)
+set_brightness(min((brightness * 2), 100), 2)
