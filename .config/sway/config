@@ -14,22 +14,28 @@ set $down n
 set $up i
 set $right o
 # Your preferred terminal emulator
-set $term "alacritty"
-set $browser "firefox-wayland"
+set $term "kitty -1"
+set $browser "env $(cat ~/.config/sway/env) firefox-nightly"
 set $filemanager "nemo"
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu exec env $(cat ~/.config/sway/env) wofi --show drun
+set $menu exec "env $(cat ~/.config/sway/env) rofi -modi drun,file-browser-extended,keys -show drun"
 exec mako
 exec c-hjkl
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec persway -a
+exec pipewire
+exec pipewire-media-session
+exec pipewire-pulse
+exec ~/GitClones/xdg-desktop-portal-wlr/build/xdg-desktop-portal-wlr -r
+exec gammastep -l $(cat ~/.config/loc)
+
 # set $menu exec ~/.config/waybar/scripts/wofi.sh
 # set $menu nwggrid -l us
 set $wob /tmp/swaytmp/wobpipe
 # Status Bar
-exec swayidle -w timeout 600 "systemctl suspend"
+exec swayidle -w timeout 600 "loginctl suspend"
 exec gammastep -l $(cat loc.loc)
 exec dbus-daemon --session --address=unix:path=$XDG_RUNTIME_DIR/bus
 #bar {
@@ -52,19 +58,24 @@ exec dbus-daemon --session --address=unix:path=$XDG_RUNTIME_DIR/bus
 # Bar
 exec_always ~/.config/waybar/waybar.sh
 
+bindsym $mod+m exec i3-quickterm shell
+
 font pango:Inter Bold 9
 
 set $gnome-schema org.gnome.desktop.interface
 
 exec_always {
-        gsettings set $gnome-schema gtk-theme 'Ant-Dracula'
-        gsettings set org.gnome.desktop.wm.preferences theme "Ant-Dracula"
+        gsettings set $gnome-schema gtk-theme 'FlatColor'
+        gsettings set org.gnome.desktop.wm.preferences theme "FlatColor"
 }
 
+bindsym $mod+Escape exec wlogout
+bindsym $mod+z exec termite --name=launcher -e "bash -c 'compgen -c | grep -v fzf | sort -u | fzf --layout=reverse | xargs -r swaymsg -t command exec'"
+for_window [app_id="^launcher$"] floating enable, border none, opacity 0.8
 
 #exec wl-paste -t text --watch clipman store
 #exec wl-paste -p -t text --watch clipman store -P --histpath="~/.local/share/clipman-primary.json"
-bindsym $mod+h exec clipman pick -t wofi
+# bindsym $mod+h exec clipman pick -t wofi
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
@@ -76,6 +87,10 @@ output DP-2 scale 1.75
 output DP-2 transform 90
 output DP-2 pos 1920 0
 output DP-1 pos 0 750
+output * adaptive_sync on
+output DP-2 scale_filter nearest
+output DP-1 max_render_time 1
+output DP-2 max_render_time 1
 # exec ~/.config/sway/scripts/wallpaper_change.sh
 
 # Clamshell Mode
@@ -170,7 +185,7 @@ input "1267:12448:ELAN0708:00_04F3:30A0_Touchpad" {
     # Restart foot server
     bindsym Control+$mod+r exec foot --server
     # Startpage search
-    bindsym $mod+s exec ~/.config/sway/scripts/startpage.sh
+    # bindsym $mod+s exec ~/.config/sway/scripts/startpage.sh
 #
 # Moving around:
 #
@@ -304,6 +319,8 @@ mode "Logout" {
 bindsym $mod+r mode "Resize"
 bindsym Control+$mod+e exec nwgbar -b 2e3440ff
 bindsym $mod+p exec grim -g "$(slurp -d)" - | swappy -f -
+bindsym $mod+Shift+p exec grim -o "~/Desktop/Screenshot\ $(date)"
+bindsym $mod+s sticky toggle
 #
 # Status Bar:
 #
@@ -335,6 +352,10 @@ for_window [app_id="zenity"] floating enable
 for_window [class="Gimp"] floating enable
 for_window [app_id="qemu"] floating enable
 for_window [app_id="chromium"] floating enable
+for_window [title="Picture-in-Picture"] sticky enable
+for_window [title="Picture-in-Picture"] floating enable
+#for_window [sticky] border color yellow
+
 #assign [app_id="logs"] workspace 9
 #exec kitty -1 --class logs -e tail -f ~/.swaylog
 #exec kitty -1 --class logs -e tail -f ~/.swayerrlog
@@ -355,3 +376,8 @@ input "4152:5904:SteelSeries_SteelSeries_Rival_300_Gaming_Mouse" {
   pointer_accel 0
   accel_profile flat pointer_accel
 }
+
+for_window [title="Firefox Developer Edition — Sharing Indicator"] floating enable
+for_window [class="Tauon Music Box"] move to workspace 4
+for_window [app_id="firefoxdeveloperedition"] move to workspace 2
+for_window [title="^Discord"] move to workspace 5
